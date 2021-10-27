@@ -70,32 +70,48 @@ function playRound(playerSelection, computerSelection) {
   }
 }
 
-function game() {
-  let pScore = 0;
-  let cScore = 0;
-  let draw = 0;
-  let playerSelection = '';
-  while (!playerSelection) {
-    playerSelection = prompt('Choose Rock, paper, or scissors', '');
+function game(playerSelection) {
+  const results = document.querySelector('.results');
+  if (gameOver) return;
+  if (pScore < 5 && cScore < 5) {
+    let computerSelection = computerPlay();
+    let result = playRound(playerSelection, computerSelection);
+    if (result.win === 'player') {
+      pScore++;
+    } else if (result.win === 'computer') {
+      cScore++;
+    }
+    let text = `You chose: ${playerSelection}. Computer chose: ${computerSelection}.
+                  ${result.message} Score is ${pScore} - ${cScore}`;
+    
+    const p = document.createElement('p');
+    p.textContent = text;
+    results.appendChild(p);
   }
-  let computerSelection = computerPlay();
-  let result = playRound(playerSelection, computerSelection);
-  if (result.win === 'player') {
-    pScore++;
-  } else if (result.win === 'computer') {
-    cScore++;
-  } else if (result.win === 'draw') {
-    draw++;
+  if (pScore === 5 || cScore === 5) {
+    let endMsg = `Game over! 
+    Player score: ${pScore}.
+    Computer score: ${cScore}.
+    ${(pScore > cScore) ? 'Player wins!' : 'Computer wins!'}`;
+    const endP = document.createElement('p');
+    endP.textContent = endMsg;
+    results.appendChild(endP);
+    gameOver = true;
+    return;
   }
-  console.log(result.message);
-  /*   
-  let endMsg = 
-    `Player score: ${pScore}
-    Computer score: ${cScore}
-    Draw: ${draw}
-    ${(pScore > cScore) ? 'Player wins!' : (cScore > pScore) ?
-        'Computer wins!' : 'Draw!'}`;
-  console.log(endMsg);
-  */
 }
+
+
+const buttons = document.querySelectorAll('button');
+let gameOver = false;
+let pScore = 0;
+let cScore = 0;
+
+buttons.forEach((button) => {
+  
+  button.addEventListener('click', (e) => {
+    game(e.target.textContent);
+  });
+});
+
 
